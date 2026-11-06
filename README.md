@@ -179,6 +179,8 @@ streamlit run app.py
 
 L'interface sera accessible à l'adresse indiquée dans le terminal Streamlit.
 
+**NB:** Veuillez consulter le fichier docs/captures pour voir quelques captures présentant la plateforme 
+
 ---
 
 ## Sécurité et gestion des accès
