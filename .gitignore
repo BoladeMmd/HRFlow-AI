@@ -1,0 +1,30 @@
+
+
+# Secrets
+.env
+.env.*
+
+# Python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# Environnements virtuels
+venv/
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+
+# Logs et fichiers temporaires
+*.log
+.DS_Store
+
+# Données sensibles
+*.sql
+*.dump
+*.backup
+uploads/
+justificatifs/

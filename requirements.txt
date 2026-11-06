@@ -1,0 +1,25 @@
+# Backend - API
+fastapi
+uvicorn[standard]
+sqlalchemy
+psycopg2-binary
+python-jose[cryptography]
+passlib[bcrypt]
+python-multipart
+
+# Frontend
+streamlit
+requests
+
+# Analyse et visualisation
+pandas
+plotly
+
+# Agent IA
+langgraph
+langchain
+langchain-groq
+python-dotenv
+
+# Planification des tâches
+apscheduler
