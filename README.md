@@ -212,7 +212,9 @@ Plusieurs améliorations peuvent être envisagées :
 ## Auteur
 
 **Projet réalisé par Boladé MAMADOU , Ingenieur data & IA .**
+
 **Mail:** bolademamadou7@gmail.com
+
 **Linkedin**: https://www.linkedin.com/in/bolad%C3%A9-mamadou-a1a91833a/
 
 **Domaines mobilisés :**
