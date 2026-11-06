@@ -112,7 +112,7 @@ Le fonctionnement de l'assistant repose sur le principe du *Tool Calling* :
 ### 1. Cloner le dépôt
 
 ```bash
-git clone https://github.com/VOTRE-USERNAME/HRFlow-AI.git
+git clone https://github.com/BoladeMmd/HRFlow-AI.git
 cd HRFlow-AI
 ```
 
