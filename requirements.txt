@@ -2,7 +2,6 @@
 fastapi
 uvicorn[standard]
 sqlalchemy
-psycopg2-binary
 python-jose[cryptography]
 passlib[bcrypt]
 python-multipart
@@ -23,3 +22,6 @@ python-dotenv
 
 # Planification des tâches
 apscheduler
+pwdlib[argon2]
+email-validator
+psycopg[binary]
