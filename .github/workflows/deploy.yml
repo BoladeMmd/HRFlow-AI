@@ -1,0 +1,55 @@
+
+name: Deploy HRFlow AI
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+concurrency:
+  group: hrflow-production
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    runs-on: [self-hosted, Linux, X64]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Synchronize application files
+        env:
+          DEPLOY_DIR: /home/hrflow/HRFlow-AI
+        run: |
+          set -euo pipefail
+
+          rsync -a \
+            --exclude='.git/' \
+            --exclude='.env' \
+            --exclude='.venv/' \
+            --exclude='__pycache__/' \
+            "$GITHUB_WORKSPACE/" \
+            "$DEPLOY_DIR/"
+
+      - name: Build Docker images
+        working-directory: /home/hrflow/HRFlow-AI
+        run: |
+          docker compose build backend frontend
+
+      - name: Deploy application
+        working-directory: /home/hrflow/HRFlow-AI
+        run: |
+          docker compose up -d --no-deps backend frontend
+
+      - name: Verify deployment
+        working-directory: /home/hrflow/HRFlow-AI
+        run: |
+          docker compose ps
+          docker compose logs --tail=30 backend
+          docker compose logs --tail=30 frontend
+
+      - name: Deployment completed
+        run: echo "HRFlow AI deployed successfully!"
+
