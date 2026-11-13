@@ -33,23 +33,83 @@ jobs:
             "$GITHUB_WORKSPACE/" \
             "$DEPLOY_DIR/"
 
-      - name: Build Docker images
+      - name: Build Docker images with BuildKit cache
         working-directory: /home/hrflow/HRFlow-AI
+        env:
+          DOCKER_BUILDKIT: "1"
+          BUILDKIT_PROGRESS: plain
         run: |
-          docker compose build backend frontend
+          set -euo pipefail
 
-      - name: Deploy application
+          echo "Activation de Docker BuildKit..."
+
+          docker compose build --progress=plain backend frontend
+
+      - name: Restart Backend and Frontend
         working-directory: /home/hrflow/HRFlow-AI
         run: |
-          docker compose up -d --no-deps backend frontend
+          set -euo pipefail
+
+          echo "Redemarrage du Backend et du Frontend..."
+
+          docker compose up -d --no-deps --force-recreate backend frontend
+
+      - name: Verify HTTP availability
+        working-directory: /home/hrflow/HRFlow-AI
+        run: |
+          set -euo pipefail
+
+          wait_for_http() {
+            service="$1"
+            url="$2"
+            max_attempts=18
+
+            echo "Verification de $service : $url"
+
+            for attempt in $(seq 1 "$max_attempts"); do
+
+              http_code=$(curl -sS \
+                -o /dev/null \
+                -w "%{http_code}" \
+                --connect-timeout 3 \
+                --max-time 10 \
+                "$url" 2>/dev/null || true)
+
+              if [ "$http_code" = "200" ]; then
+                echo "$service disponible (HTTP 200)"
+                return 0
+              fi
+
+              echo "Tentative $attempt/$max_attempts : HTTP ${http_code:-000}"
+
+              sleep 5
+            done
+
+            echo "ERREUR : $service ne repond pas."
+
+            docker compose logs --tail=80 "$service" || true
+
+            return 1
+          }
+
+          wait_for_http backend http://127.0.0.1:8000/
+          wait_for_http frontend http://127.0.0.1:8501/
 
       - name: Verify deployment
         working-directory: /home/hrflow/HRFlow-AI
         run: |
+          set -euo pipefail
+
           docker compose ps
-          docker compose logs --tail=30 backend
-          docker compose logs --tail=30 frontend
+
+          echo "Verification PostgreSQL..."
+
+          docker inspect \
+            --format='PostgreSQL health: {{.State.Health.Status}}' \
+            hrflow_db
 
       - name: Deployment completed
-        run: echo "HRFlow AI deployed successfully!"
+        run: |
+          echo "HRFlow AI deployed successfully!"
+
 

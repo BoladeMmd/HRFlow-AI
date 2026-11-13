@@ -1,14 +1,20 @@
+# syntax=docker/dockerfile:1
+
 FROM python:3.11-slim
 
-ENV PYTHONDONTWRITEBYTECODE=1
-ENV PYTHONUNBUFFERED=1
-ENV PYTHONPATH=/app/backend
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PYTHONPATH=/app/backend
 
 WORKDIR /app
 
+# Installation des dépendances avec cache BuildKit
 COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
 
+RUN --mount=type=cache,target=/root/.cache/pip \
+    pip install -r requirements.txt
+
+# Copie du code backend
 COPY backend/ /app/backend/
 
 WORKDIR /app/backend
